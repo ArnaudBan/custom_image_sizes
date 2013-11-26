@@ -9,19 +9,19 @@ Version: 1.1
 
 Copyright 2011  Austin Matzko  ( email : austin at pressedcode dot com )
 
-    This program is free software; you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation; either version 2 of the License, or
-    (at your option) any later version.
+		This program is free software; you can redistribute it and/or modify
+		it under the terms of the GNU General Public License as published by
+		the Free Software Foundation; either version 2 of the License, or
+		(at your option) any later version.
 
-    This program is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
+		This program is distributed in the hope that it will be useful,
+		but WITHOUT ANY WARRANTY; without even the implied warranty of
+		MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+		GNU General Public License for more details.
 
-    You should have received a copy of the GNU General Public License
-    along with this program; if not, write to the Free Software
-    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110, USA
+		You should have received a copy of the GNU General Public License
+		along with this program; if not, write to the Free Software
+		Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110, USA
 */
 
 if ( ! class_exists( 'Filosofo_Custom_Image_Sizes' ) ) {
@@ -52,6 +52,7 @@ if ( ! class_exists( 'Filosofo_Custom_Image_Sizes' ) ) {
 
 			$meta = wp_get_attachment_metadata($attachment_id);
 
+
 			/* the requested size does not yet exist for this attachment */
 			if (
 				empty( $meta['sizes'] ) ||
@@ -71,15 +72,16 @@ if ( ! class_exists( 'Filosofo_Custom_Image_Sizes' ) ) {
 				}
 
 				if ( ! empty( $height ) && ! empty( $width ) ) {
-					$resized_path = $this->_generate_attachment($attachment_id, $width, $height, $crop);
-					do_action( 'custom_image_size_resized_path', $resized_path, $attachment_id, $width, $height, $crop );
-					$fullsize_url = wp_get_attachment_url($attachment_id);
+					$new_image = $this->_generate_attachment($attachment_id, $width, $height, $crop);
 
-					$file_name = basename($resized_path);
+					if( ! is_wp_error( $new_image ) ){
+						$resized_path = $new_image['path'];
+						$width = $new_image['width'];
+						$height = $new_image['height'];
+						$file_name = $new_image['file'];
 
-					$new_url = str_replace(basename($fullsize_url), $file_name, $fullsize_url);
+						do_action( 'custom_image_size_resized_path', $resized_path, $attachment_id, $width, $height, $crop );
 
-					if ( ! empty( $resized_path ) ) {
 						$meta['sizes'][$size_name] = array(
 							'file' => $file_name,
 							'width' => $width,
@@ -88,13 +90,19 @@ if ( ! class_exists( 'Filosofo_Custom_Image_Sizes' ) ) {
 
 						wp_update_attachment_metadata($attachment_id, $meta);
 
+
+						$fullsize_url = wp_get_attachment_url($attachment_id);
+						$new_url = str_replace(basename($fullsize_url), $file_name, $fullsize_url);
+
 						return array(
 							$new_url,
 							$width,
 							$height,
 							true
 						);
+
 					}
+
 				}
 			}
 
@@ -119,33 +127,18 @@ if ( ! class_exists( 'Filosofo_Custom_Image_Sizes' ) ) {
 
 			$original_path = get_attached_file($attachment_id);
 
-			// fix a WP bug up to 2.9.2
-			if ( ! function_exists('wp_load_image') ) {
-				require_once ABSPATH . 'wp-admin/includes/image.php';
+
+			$image_editor = wp_get_image_editor( $original_path );
+
+			if ( ! is_wp_error( $image_editor ) ) {
+
+				$image_editor->resize( $width, $height, $crop);
+
+				return $image_editor->save();
+
 			}
 
-			$resized_path = @image_resize($original_path, $width, $height, $crop);
-
-			if (
-				! is_wp_error($resized_path) &&
-				! is_array($resized_path)
-			) {
-				return $resized_path;
-
-			// perhaps this image already exists.  If so, return it.
-			} else {
-				$orig_info = pathinfo($original_path);
-				$suffix = "{$width}x{$height}";
-				$dir = $orig_info['dirname'];
-				$ext = isset( $orig_info['extension'] ) ? $orig_info['extension'] : '';
-				$name = basename($original_path, ".{$ext}");
-				$destfilename = "{$dir}/{$name}-{$suffix}.{$ext}";
-				if ( file_exists( $destfilename ) ) {
-					return $destfilename;
-				}
-			}
-
-			return '';
+			return $image_editor;
 		}
 	}
 
