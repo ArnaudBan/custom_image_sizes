@@ -49,7 +49,7 @@ if ( ! class_exists( 'Filosofo_Custom_Image_Sizes' ) ) {
 				$size_name = array_shift( $size_name ) . 'x' . array_shift( $size_name );
 			}
 			$size_name = trim($size_name);
-			
+
 			$meta = wp_get_attachment_metadata($attachment_id);
 
 			/* the requested size does not yet exist for this attachment */
@@ -85,7 +85,7 @@ if ( ! class_exists( 'Filosofo_Custom_Image_Sizes' ) ) {
 							'width' => $width,
 							'height' => $height,
 						);
-						
+
 						wp_update_attachment_metadata($attachment_id, $meta);
 
 						return array(
@@ -123,11 +123,11 @@ if ( ! class_exists( 'Filosofo_Custom_Image_Sizes' ) ) {
 			if ( ! function_exists('wp_load_image') ) {
 				require_once ABSPATH . 'wp-admin/includes/image.php';
 			}
-			
+
 			$resized_path = @image_resize($original_path, $width, $height, $crop);
-			
-			if ( 
-				! is_wp_error($resized_path) && 
+
+			if (
+				! is_wp_error($resized_path) &&
 				! is_array($resized_path)
 			) {
 				return $resized_path;
@@ -138,7 +138,7 @@ if ( ! class_exists( 'Filosofo_Custom_Image_Sizes' ) ) {
 				$suffix = "{$width}x{$height}";
 				$dir = $orig_info['dirname'];
 				$ext = isset( $orig_info['extension'] ) ? $orig_info['extension'] : '';
-				$name = basename($original_path, ".{$ext}"); 
+				$name = basename($original_path, ".{$ext}");
 				$destfilename = "{$dir}/{$name}-{$suffix}.{$ext}";
 				if ( file_exists( $destfilename ) ) {
 					return $destfilename;
