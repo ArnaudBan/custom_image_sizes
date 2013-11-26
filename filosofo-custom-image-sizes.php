@@ -45,13 +45,12 @@ if ( ! class_exists( 'Filosofo_Custom_Image_Sizes' ) ) {
 			global $_wp_additional_image_sizes;
 
 			$attachment_id = (int) $attachment_id;
-			if ( is_array( $size_name ) && 1 < count( $size_name ) ) {
-				$size_name = array_shift( $size_name ) . 'x' . array_shift( $size_name );
-			}
+			if (is_array($size_name)) {
+	      $size_name = implode('x', $size_name);
+	    }
 			$size_name = trim($size_name);
 
 			$meta = wp_get_attachment_metadata($attachment_id);
-
 
 			/* the requested size does not yet exist for this attachment */
 			if (
@@ -65,10 +64,10 @@ if ( ! class_exists( 'Filosofo_Custom_Image_Sizes' ) ) {
 					$crop = (bool) $_wp_additional_image_sizes[$size_name]['crop'];
 
 				// if not, see if name is of form [width]x[height] and use that to crop
-				} else if ( preg_match('#^(\d+)x(\d+)$#', $size_name, $matches) ) {
+				} else if ( preg_match('#^(\d+)x(\d+)[x]?(\d+)?$#', $size_name, $matches) ) {
 					$height = (int) $matches[2];
 					$width = (int) $matches[1];
-					$crop = true;
+					$crop = (isset($matches[3]) && $matches[3] == '0') ? false : true;
 				}
 
 				if ( ! empty( $height ) && ! empty( $width ) ) {
@@ -144,8 +143,7 @@ if ( ! class_exists( 'Filosofo_Custom_Image_Sizes' ) ) {
 
 	function initialize_custom_image_sizes()
 	{
-		global $filosofo_custom_image_sizes;
-		$filosofo_custom_image_sizes = new Filosofo_Custom_Image_Sizes;
+		$filosofo_custom_image_sizes = new Filosofo_Custom_Image_Sizes();
 	}
 
 	add_action('plugins_loaded', 'initialize_custom_image_sizes');
