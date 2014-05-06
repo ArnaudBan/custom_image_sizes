@@ -67,7 +67,7 @@ if ( ! class_exists( 'Filosofo_Custom_Image_Sizes' ) ) {
 				} else if ( preg_match('#^(\d+)x(\d+)[x]?(\d+)?$#', $size_name, $matches) ) {
 					$height = (int) $matches[2];
 					$width = (int) $matches[1];
-					$crop = (isset($matches[3]) && $matches[3] == '0') ? false : true;
+					$crop = (isset($matches[3]) && $matches[3] == '1') ? true : false;
 				}
 
 				if ( ! empty( $height ) && ! empty( $width ) ) {
