@@ -1,0 +1,15 @@
+{
+    "name": "arnaudban/custom-image-sizes",
+    "description": "WordPress plugin to add generate custome image size on demande",
+    "type": "wordpress-plugin",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "ArnaudBan",
+            "email": "arnaud@banvillet.fr"
+        }
+    ],
+    "require": {
+        "php": "^7.2"
+    }
+}
