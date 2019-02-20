@@ -1,7 +1,7 @@
 {
     "name": "arnaudban/custom-image-sizes",
     "description": "WordPress plugin to add generate custome image size on demande",
-    "type": "wordpress-plugin",
+    "type": "wordpress-muplugin",
     "license": "MIT",
     "authors": [
         {
