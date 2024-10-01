@@ -5,7 +5,7 @@ Plugin URI: http://austinmatzko.com/wordpress-plugins/filosofo-custom-image-size
 Description: A plugin that creates custom image sizes for image attachments.
 Author: Austin Matzko
 Author URI: http://austinmatzko.com
-Version: 1.1
+Version: 1.2
 
 Copyright 2011  Austin Matzko  ( email : austin at pressedcode dot com )
 
